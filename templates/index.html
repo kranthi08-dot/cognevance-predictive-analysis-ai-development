@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Churn Predictor</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem;color:#1f2937}
+label{display:block;margin-top:.8rem;font-size:.9rem}input,select{width:100%;padding:.5rem;margin-top:.2rem;box-sizing:border-box}
+button{margin-top:1.2rem;padding:.7rem 1.4rem;background:#2563eb;color:#fff;border:0;border-radius:6px;cursor:pointer}
+#out{margin-top:1.5rem;padding:1rem;border-radius:8px;background:#f3f4f6;display:none}
+.High{color:#b91c1c}.Medium{color:#b45309}.Low{color:#15803d}
+</style></head><body>
+<h1>Customer Churn Predictor</h1>
+<form id="f">
+<label>Tenure (months)<input name="tenure_months" type="number" value="8" required></label>
+<label>Monthly charges<input name="monthly_charges" type="number" step="0.01" value="85" required></label>
+<label>Support calls<input name="support_calls" type="number" value="3" required></label>
+<label>Contract<select name="contract"><option>Month-to-month</option><option>One year</option><option>Two year</option></select></label>
+<label>Internet service<select name="internet_service"><option>Fiber</option><option>DSL</option><option>None</option></select></label>
+<label>Payment method<select name="payment_method"><option>Electronic check</option><option>Credit card</option><option>Bank transfer</option><option>Mailed check</option></select></label>
+<button type="submit">Predict</button></form>
+<div id="out"></div>
+<script>
+document.getElementById('f').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const d=Object.fromEntries(new FormData(e.target));
+ for(const k of ['tenure_months','monthly_charges','support_calls'])d[k]=Number(d[k]);
+ const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+ const j=await r.json(),o=document.getElementById('out');o.style.display='block';
+ o.innerHTML=j.error?('Error: '+j.error):`<b>Churn probability:</b> ${(j.churn_probability*100).toFixed(1)}%<br><b>Risk level:</b> <span class="${j.risk_level}">${j.risk_level}</span><br><b>Will churn:</b> ${j.will_churn?'Yes':'No'}`;
+});
+</script></body></html>

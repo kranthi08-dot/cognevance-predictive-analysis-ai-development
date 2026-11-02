@@ -1,0 +1,18 @@
+{
+  "threshold": 0.303,
+  "model": "Logistic Regression",
+  "features": [
+    "age",
+    "tenure_months",
+    "num_services",
+    "monthly_charges",
+    "total_charges",
+    "support_calls",
+    "late_payments",
+    "region",
+    "contract",
+    "internet_service",
+    "payment_method",
+    "paperless_billing"
+  ]
+}
